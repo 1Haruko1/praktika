@@ -1,0 +1,273 @@
+1.1 Задача линейного алгоритма. 
+Условие задачи:
+Варинат 14. Товар подорожал на 20%, а затем подешевел на 15%. Как изменилась исходная цена?
+Таблица 1 - Таблица идентификаторов к задаче 1
+Идентификатор	Описание	Тип данных
+initial_price	Исходная цена товара	float
+increased	Цена после подорожания	float
+final_price	Цена после удешевления	float
+change	Изменение цены в процентах	float
+
+
+
+Код программы:
+# Ввод исходной цены
+initial_price = float(input("Введите исходную цену товара: "))
+# Подорожание на 20%
+increased = initial_price * 1.20
+# Удешевление на 15%
+final_price = increased * 0.85
+# Расчет изменения цены в процентах
+change = ((final_price - initial_price) / initial_price) * 100
+# Вывод результата
+print(f"Итоговое изменение цены: {change:.2f}%")
+Результат:
+ 
+
+1.2 Задача разветвляющегося алгоритма
+Условие задачи: 14.	Калькулятор
+Пользователь вводит два числа и операцию (+, -, *, /). Выведите результат или сообщение об ошибке (деление на ноль).
+
+
+
+Код программы:
+# Ввод чисел и операции
+num1 = float(input("Введите первое число: "))
+num2 = float(input("Введите второе число: "))
+operation = input("Введите операцию (+, -, *, /): ")
+
+# Вычисление результата
+if operation == "+":
+    result = num1 + num2
+elif operation == "-":
+    result = num1 - num2
+elif operation == "*":
+    result = num1 * num2
+elif operation == "/":
+    if num2 != 0:
+        result = num1 / num2
+    else:
+        result = "Ошибка: деление на ноль!"
+else:
+    result = "Ошибка: неизвестная операция!"
+
+# Вывод результата
+print("Результат:", result)
+
+
+
+
+1.3 Задача циклического алгоритма
+Условие задачи:
+     Пирамида из символов
+Выведите пирамиду заданной высоты (например, для высоты 3):
+text
+  *  
+ ***  
+*****  
+
+
+Код программы: 
+def print_pyramid(height):
+    """Выводит пирамиду заданной высоты"""
+    for i in range(1, height + 1):
+        # Пробелы перед звездами
+        print(" " * (height - i), end="")
+        # Звезды
+        print("*" * (2 * i - 1))
+
+try:
+    # Ввод данных с проверкой
+    height = int(input("Введите высоту пирамиды (положительное число): "))
+    
+    # Проверка на положительное число
+    if height <= 0:
+        raise ValueError("Высота должна быть положительным числом!")
+    
+    # Проверка на слишком большую высоту (чтобы не сломать терминал)
+    if height > 50:
+        raise ValueError("Слишком большая высота! Максимум 50.")
+    
+    # Вывод пирамиды
+    print_pyramid(height)
+
+except ValueError as e:
+    # Обработка ошибок ввода
+    print(f"Ошибка: {e}")
+except Exception as e:
+    # Обработка других непредвиденных ошибок
+    print(f"Произошла непредвиденная ошибка: {e}")
+finally:
+    print("\nПрограмма завершена.")
+
+1.4 Задача на проектирование классов
+
+Код программы:
+from abc import ABC, abstractmethod
+
+class Encryptor(ABC):
+    """Абстрактный базовый класс для шифрования"""
+    
+    def __init__(self, key):
+        self._key = key
+    
+    @abstractmethod
+    def encrypt(self, text: str):
+        pass
+    
+    @abstractmethod
+    def decrypt(self, text: str):
+        pass
+    
+    def get_key(self):
+        return self._key
+    
+    def set_key(self, new_key):
+        self._key = new_key
+
+
+class CaesarEncryptor(Encryptor):
+    """Реализация шифра Цезаря"""
+    
+    def encrypt(self, text: str) -> str:
+        result = []
+        for char in text:
+            if char.isalpha():
+                shift = self._key % 26
+                if char.islower():
+                    new_char = chr(((ord(char) - ord('a') + shift) % 26 + ord('a'))
+                else:
+                    new_char = chr(((ord(char) - ord('A') + shift) % 26 + ord('A'))
+                result.append(new_char)
+            else:
+                result.append(char)
+        return ''.join(result)
+    
+    def decrypt(self, text: str) -> str:
+        self._key = -self._key  # Инвертируем ключ для дешифровки
+        decrypted = self.encrypt(text)
+        self._key = -self._key  # Возвращаем исходный ключ
+        return decrypted
+
+
+class XOREncryptor(Encryptor):
+    """Реализация XOR-шифрования"""
+    
+    def __init__(self, key: str):
+        super().__init__(key.encode())
+    
+    def encrypt(self, text: str) -> bytes:
+        key_bytes = self._key
+        text_bytes = text.encode()
+        return bytes([text_bytes[i] ^ key_bytes[i % len(key_bytes)] for i in range(len(text_bytes)))
+    
+    def decrypt(self, data: bytes) -> str:
+        return self.encrypt(data.decode('latin1')).decode('latin1')
+
+
+# Пример использования
+if __name__ == "__main__":
+    print("=== Тестирование шифра Цезаря ===")
+    caesar = CaesarEncryptor(3)
+    
+    original_text = "Hello World!"
+    encrypted = caesar.encrypt(original_text)
+    decrypted = caesar.decrypt(encrypted)
+    
+    print(f"Оригинальный текст: {original_text}")
+    print(f"Зашифрованный текст: {encrypted}")  # Khoor Zruog!
+    print(f"Расшифрованный текст: {decrypted}")  # Hello World!
+    
+    print("\n=== Тестирование XOR-шифрования ===")
+    xor = XOREncryptor("secret_key")
+    
+    original_text = "Secret Message"
+    encrypted = xor.encrypt(original_text)
+    decrypted = xor.decrypt(encrypted)
+    
+    print(f"Оригинальный текст: {original_text}")
+    print(f"Зашифрованные данные: {encrypted}")
+    print(f"Расшифрованный текст: {decrypted}")
+    
+    print("\n=== Тестирование смены ключа ===")
+    print(f"Текущий ключ Caesar: {caesar.get_key()}")
+    caesar.set_key(5)
+    print(f"Новый ключ Caesar: {caesar.get_key()}")
+    
+    print(f"\nТекущий ключ XOR: {xor.get_key()}")
+    xor.set_key("new_key".encode())
+    print(f"Новый ключ XOR: {xor.get_key()}")
+
+
+1.5 Задача с графическим интерфейсом
+Условие:Вариант 14.Визуализация данных
+Разработайте приложение для визуализации данных в виде диаграмм и графиков.
+Таблица 3 - Таблица идентификаторов к задаче 5
+Компонент/объект	Базовый класс	Свойства	Назначение, методы, события
+btn_load	QPushButton	Цвет: зеленый
+Текст: "Загрузить данные"	Загрузка данных из CSV файла
+Метод: load_data()
+Событие: clicked
+chart_type	QComboBox	Элементы: список типов графиков	Выбор типа диаграммы для отображения
+btn_plot	QPushButton	Цвет: синий
+Текст: "Построить график"	Построение выбранного графика
+Метод: plot_chart()
+Событие: clicked
+btn_exit	QPushButton	Цвет: красный
+Текст: "Выход"	Закрытие приложения
+Событие: clicked
+canvas	FigureCanvas	-	Область для отображения графиков Matplotlib
+statusBar	QStatusBar	-	Отображение статуса операций
+
+ 
+
+Код программы:
+using System;
+using System.Data;
+using System.IO;
+using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+
+namespace DataVisualizationWinForms
+{
+    public partial class MainForm : Form
+    {
+        private DataTable dataTable;
+
+        public MainForm()
+        {
+            InitializeComponent();
+            InitializeChart();
+            SetupUI();
+        }
+
+        private void InitializeChart()
+        {
+            chart1.Titles.Add("Визуализация данных");
+            chart1.ChartAreas.Add(new ChartArea("MainArea"));
+        }
+
+        private void SetupUI()
+        {
+            // Настройка кнопки загрузки
+            var btnLoad = new Button
+            {
+                Text = "Загрузить данные",
+                BackColor = System.Drawing.Color.Green,
+                ForeColor = System.Drawing.Color.White,
+                Width = 120,
+                Top = 10,
+                Left = 10
+            };
+            btnLoad.Click += BtnLoad_Click;
+            Controls.Add(btnLoad);
+
+            // Настройка выпадающего списка
+            var cmbChartType = new ComboBox
+            {
+                Width = 150,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Top = 10,
+                Left = 140
+            };
+            cmbChartType.Items.AddRange(new[] { "Линейный", "Столбчатый", "Круговой", "Точечный" });
